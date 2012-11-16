@@ -24,13 +24,14 @@ Function:
 Fully working initial version by Paul Klumpp, 2012-11-12
 Please record your big changes here and increase version number:
 
+1.5: exchanged all "say" with bprintf or dprintf
 1.4: added round_state check, added whether a cvar "q2a_mvd_autorecord" needs to be set so the recording happens runs (for lrcon usage)
 1.3: added "exec_script_on_system_after_recording" for config.lua. BE CAREFUL with those shellscripts!
 1.2: Checks for (Action Quake 2 and sv_mvd_enable != 0). And added useful mvd defaults for scoreboard
 1.1: Even works on aq2-tng public teamplay mode now
 1.0: All working on aq2-tng matchmode
 0.9: Last Debug
-    
+
 config.lua example, with all options:
 ------------------------------
 plugins = {
@@ -45,7 +46,7 @@ plugins = {
 }
 ------------------------------
 !! Notice the "," in front of mvd = {
-    
+
 --]]
 
 local game = gi.cvar("game", "").string
@@ -57,7 +58,7 @@ if game ~= "action" or sv_mvd_enable == "0" or sv_mvd_enable == "" or sv_mvd_ena
 end
 -- if we came to here, it's action!
 
-local version = "1.4hau"
+local version = "1.5hau"
 gi.AddCommandString("sets q2a_mvd "..version.."\n")
 
 local mvd_webby -- configure this one in the config.lua
@@ -139,7 +140,7 @@ function mvd_start_recording()
 
     local hostname = gi.cvar("hostname", "").string
 
-    gi.AddCommandString("say '"..hostname.."' MVD2 recording started: "..mvd_file.."\n")
+    gi.bprintf(PRINT_HIGH, "'%s' MVD2 recording started: %s\n", hostname, mvd_file)
 
 end
 
@@ -155,9 +156,9 @@ function mvd_stop_and_delete()
             --$game demos/lala.mvd2.gz
             if file_exists(mvd_pathfile) then
                 if os.remove(mvd_pathfile) then
-                    gi.AddCommandString("say Deleted the MVD2: "..mvd_pathfile.."\n")
+                    gi.bprintf('mvd.lua mvd_stop_and_delete(): Deleted the MVD2: %s\n', mvd_file)
                 else
-                    gi.AddCommandString("say Problems deleting MVD2: "..mvd_pathfile.."\n")
+                    gi.dprintf('mvd.lua mvd_stop_and_delete(): Problems deleting MVD2: %s\n', mvd_file)
                 end
             end
             mvd_pathfile = ""
@@ -165,7 +166,7 @@ function mvd_stop_and_delete()
         end
     else
         if mvd_records == true then
-            gi.AddCommandString("say Be quick to ready up again! MVD2 is still recording!\n")
+            gi.bprintf('Be quick to ready up again! MVD2 is still recording!\n')
         end
     end
     
@@ -180,9 +181,9 @@ function mvd_stop()
         if file_exists(mvd_pathfile) then
             --$game demos/lala.mvd2.gz
             if mvd_webby ~= nil then
-                gi.AddCommandString("say Download the MVD2("..mvd_file..") on "..mvd_webby.."\n")
+                gi.bprintf(PRINT_HIGH, 'Download the MVD2(%s) - %s\n', mvd_file, mvd_webby)
             else
-                gi.AddCommandString("say Download the MVD2: "..mvd_file.."\n")
+                gi.bprintf(PRINT_HIGH, 'Download the MVD2: %s\n', mvd_file)
             end
             if exec_script_on_system_after_recording ~= nil then
                 gi.dprintf('mvd.lua mvd_stop(): os.execute '..exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"\n')
