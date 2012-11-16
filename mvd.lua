@@ -15,8 +15,6 @@ Please record your big changes here and increase version number:
 1.0: All working on aq2-tng matchmode
 0.9: Last Debug
     
-    
-    
 config.lua example, with all options:
 ------------------------------
 plugins = {
