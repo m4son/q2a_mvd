@@ -1,5 +1,21 @@
 --[[
 LUA MVD script for the extended hifi-q2admin (https://github.com/hifi/q2admin/)
+------------------------------
+Copyright (C) 2012 Paul Klumpp
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+------------------------------
 
 Function:
  Automatically starts recording of Q2Pro Multi View Demos within the Action Quake2 - TNG Mod when match starts.
@@ -35,7 +51,7 @@ plugins = {
 local game = gi.cvar("game", "").string
 local sv_mvd_enable = gi.cvar("sv_mvd_enable", "").string
 
-if game ~= "action" or sv_mvd_enable == "0" then
+if game ~= "action" or sv_mvd_enable == "0" or sv_mvd_enable == "" or sv_mvd_enable == nil then
     gi.dprintf("mvd.lua WARNING: This script only loads when game is 'action' and when sv_mvd_enable is '1' or '2'!\n")
     return 0
 end
@@ -351,3 +367,6 @@ end -- of LogMessage
 -- Match is over, waiting for next map, please vote a new one..
    -- if mvd is currently recording, then stop mvd recording (and keep file) and advertise!
         
+--[[
+# vim: expandtab tabstop=4 shiftwidth=4 softtabstop=4 autoindent:
+--]]
