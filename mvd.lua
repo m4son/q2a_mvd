@@ -148,8 +148,8 @@ function mvd_stop_and_delete()
     
     local current_round_state = get_round_state()
     
-    if current_round_state == started_on_round_state then
-        if mvd_records == true then
+    if mvd_records == true then
+        if current_round_state == started_on_round_state then
             gi.AddCommandString("mvdstop\n")
             mvd_records = false
             -- if file exists in game dir, delete it
@@ -163,9 +163,7 @@ function mvd_stop_and_delete()
             end
             mvd_pathfile = ""
             mvd_file = ""
-        end
-    else
-        if mvd_records == true then
+        else
             gi.bprintf(PRINT_CHAT, 'MVD: Be quick to ready up again! MVD2 is still recording!\n')
         end
     end
@@ -288,8 +286,8 @@ function LogMessage(msg)
         if mvd_records == false then
             
             if needs_cvar_q2a_mvd_autorecord == true then
-                local q2a_mvd_autorecord = gi.cvar("q2a_mvd_autorecord", "").string
-                if q2a_mvd_autorecord ~= nil and q2a_mvd_autorecord ~= "0" then 
+                local q2a_mvd_autorecord = gi.cvar("q2a_mvd_autorecord", "0").string
+                if q2a_mvd_autorecord ~= "" and q2a_mvd_autorecord ~= "0" then 
                     mvd_start_recording()
                 end
             else
