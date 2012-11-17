@@ -206,6 +206,7 @@ function q2a_load(config)
     
     mvd_webby = config.mvd_webby
     exec_script_on_system_after_recording = config.exec_script_on_system_after_recording
+    needs_cvar_q2a_mvd_autorecord = config.needs_cvar_q2a_mvd_autorecord
     
     if mvd_webby == nil then
         gi.dprintf("mvd.lua q2a_load(): You may define 'mvd_webby' in the config.lua file.\n")
