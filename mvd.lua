@@ -107,7 +107,7 @@ function get_round_state()
         local cvar_t1 = gi.cvar("t1", "").string
         local cvar_t2 = gi.cvar("t2", "").string
         local cvar_t3 = gi.cvar("t3", "").string
-        local rstate = ""..t1.." "..t2.." "..t3..""
+        local rstate = ""..cvar_t1.." "..cvar_t2.." "..cvar_t3..""
         return rstate
     end
     return 0
