@@ -140,7 +140,7 @@ function mvd_start_recording()
 
     local hostname = gi.cvar("hostname", "").string
 
-    gi.bprintf(1, "'%s' MVD2 recording started: %s\n", hostname, mvd_file)
+    gi.bprintf(PRINT_HIGH, "'%s' MVD2 recording started: %s\n", hostname, mvd_file)
 
 end
 
@@ -156,7 +156,7 @@ function mvd_stop_and_delete()
             --$game demos/lala.mvd2.gz
             if file_exists(mvd_pathfile) then
                 if os.remove(mvd_pathfile) then
-                    gi.bprintf(PRINT_HIGH, 'mvd.lua mvd_stop_and_delete(): Deleted the MVD2: %s\n', mvd_file)
+                    gi.bprintf(PRINT_HIGH, 'Deleted the MVD2: %s\n', mvd_file)
                 else
                     gi.dprintf('mvd.lua mvd_stop_and_delete(): Problems deleting MVD2: %s\n', mvd_file)
                 end
