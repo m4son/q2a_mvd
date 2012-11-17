@@ -140,7 +140,7 @@ function mvd_start_recording()
 
     local hostname = gi.cvar("hostname", "").string
 
-    gi.bprintf(PRINT_HIGH, "'%s' MVD2 recording started: %s\n", hostname, mvd_file)
+    gi.bprintf(PRINT_CHAT, "MVD: '%s' MVD2 recording started: %s\n", hostname, mvd_file)
 
 end
 
@@ -166,7 +166,7 @@ function mvd_stop_and_delete()
         end
     else
         if mvd_records == true then
-            gi.bprintf(PRINT_HIGH, 'Be quick to ready up again! MVD2 is still recording!\n')
+            gi.bprintf(PRINT_CHAT, 'MVD: Be quick to ready up again! MVD2 is still recording!\n')
         end
     end
     
@@ -182,9 +182,9 @@ function mvd_stop()
         if file_exists(mvd_pathfile) then
             --$game demos/lala.mvd2.gz
             if mvd_webby ~= nil then
-                gi.bprintf(PRINT_HIGH, 'Download the MVD2(%s) - %s\n', mvd_file, mvd_webby)
+                gi.bprintf(PRINT_CHAT, 'MVD: Download the MVD2(%s) - %s\n', mvd_file, mvd_webby)
             else
-                gi.bprintf(PRINT_HIGH, 'Download the MVD2: %s\n', mvd_file)
+                gi.bprintf(PRINT_CHAT, 'MVD: Download the MVD2: %s\n', mvd_file)
             end
             if exec_script_on_system_after_recording ~= nil then
                 gi.dprintf('mvd.lua mvd_stop(): os.execute '..exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"\n')
