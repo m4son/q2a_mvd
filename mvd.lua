@@ -186,7 +186,7 @@ function mvd_stop()
             end
             if exec_script_on_system_after_recording ~= nil then
                 gi.dprintf('mvd.lua mvd_stop(): os.execute '..exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"\n')
-                local returnstuff = os.execute(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
+                local returnstuff = os.execute(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'" &')
                 gi.dprintf('mvd.lua mvd_stop(): os.execute returns: '..returnstuff..'\n')
             end
             
