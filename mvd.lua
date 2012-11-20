@@ -24,6 +24,7 @@ Function:
 Fully working initial version by Paul Klumpp, 2012-11-12
 Please record your big changes here and increase version number:
 
+1.6: ability to give cvars as parameters to the exec_script
 1.5: exchanged all "say" with bprintf or dprintf
 1.4: added round_state check, added whether a cvar "q2a_mvd_autorecord" needs to be set so the recording happens runs (for lrcon usage)
 1.3: added "exec_script_on_system_after_recording" for config.lua. BE CAREFUL with those shellscripts!
@@ -39,9 +40,10 @@ plugins = {
         blah = "blah"
     },
     mvd = {
-        mvd_webby = "http://mvd2.quadaver.org",
-        exec_script_on_system_after_recording = "/home/gameservers/quake2/plugins/woot.sh",
+        mvd_webby = 'http://mvd2.quadaver.org',
+        exec_script_on_system_after_recording = '/home/gameservers/quake2/plugins/woot.sh',
         needs_cvar_q2a_mvd_autorecord = false
+        exec_script_cvars_as_parameters = {q2a_mvd_file game hostname}
     }
 }
 ------------------------------
@@ -58,11 +60,12 @@ if game ~= "action" or sv_mvd_enable == "0" or sv_mvd_enable == "" or sv_mvd_ena
 end
 -- if we came to here, it's action!
 
-local version = "1.5hau"
+local version = "1.6hau"
 gi.AddCommandString("sets q2a_mvd "..version.."\n")
 
 local mvd_webby -- configure this one in the config.lua
 local exec_script_on_system_after_recording -- configure this one in the config.lua
+local exec_script_cvars_as_parameters -- configure this one in the config.lua
 local needs_cvar_q2a_mvd_autorecord -- configure this one in the config.lua
 
 
@@ -116,6 +119,13 @@ end
 
 ---- big helper functions follow: ----
 
+function mvd_os_exec(script)
+    gi.dprintf('mvd.lua mvd_os_exec(): '..script..'\n')
+    local returnstuff = os.execute(script)
+    gi.dprintf('mvd.lua mvd_os_exec(): returns: '..returnstuff..'\n')
+    return returnstuff
+end
+
 function mvd_start_recording()
     -- if teamplay == 1 then save round state .. for later usage - 
     -- this is to know if record stopping also can delete the newly recorded mvd, because the rounds did not happen.
@@ -134,6 +144,10 @@ function mvd_start_recording()
     gi.AddCommandString("mvdrecord -z "..filename.."\n")
 
     mvd_file = filename..".mvd2.gz"
+
+    local cvar = gi.cvar("q2a_mvd_file", "")
+    gi.cvar_set(cvar.name, mvd_file)
+
     mvd_pathfile = game.."/demos/"..mvd_file
 
     mvd_records = true
@@ -184,10 +198,20 @@ function mvd_stop()
             else
                 gi.bprintf(PRINT_CHAT, 'MVD: Download the MVD2: %s\n', mvd_file)
             end
+            
             if exec_script_on_system_after_recording ~= nil then
-                gi.dprintf('mvd.lua mvd_stop(): os.execute '..exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"\n')
-                local returnstuff = os.execute(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
-                gi.dprintf('mvd.lua mvd_stop(): os.execute returns: '..returnstuff..'\n')
+								if exec_script_cvars_as_parameters ~= nil then
+                    
+                    local exec_str = ""
+                    for k in ipairs(exec_script_cvars_as_parameters) do 
+                        kstr = gi.cvar(k, "").string
+                        exec_str = exec_str..' "'..kstr..'"'
+                    end
+                    mvd_os_exec(exec_script_on_system_after_recording..exec_str)
+                    
+                else
+                    mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
+								end
             end
             
         end
@@ -204,25 +228,29 @@ function q2a_load(config)
     
     mvd_webby = config.mvd_webby
     exec_script_on_system_after_recording = config.exec_script_on_system_after_recording
+		exec_script_cvars_as_parameters = config.exec_script_cvars_as_parameters
     needs_cvar_q2a_mvd_autorecord = config.needs_cvar_q2a_mvd_autorecord
     
     if mvd_webby == nil then
         gi.dprintf("mvd.lua q2a_load(): You may define 'mvd_webby' in the config.lua file.\n")
-        
         -- safe default:
         mvd_webby = nil
     end
     
     if exec_script_on_system_after_recording == nil then
         gi.dprintf("mvd.lua q2a_load(): You may define 'exec_script_on_system_after_recording' in the config.lua file.\n")
-        
         -- safe default:
         exec_script_on_system_after_recording = nil
     end
-    
+    if exec_script_cvars_as_parameters == nil then
+        gi.dprintf("mvd.lua q2a_load(): You may define 'exec_script_cvars_as_parameters' in the config.lua file.\n")
+        -- safe default:
+        exec_script_cvars_as_parameters = nil
+    end
+
     if needs_cvar_q2a_mvd_autorecord == nil then
         gi.dprintf("mvd.lua q2a_load(): You may define 'needs_cvar_q2a_mvd_autorecord' in the config.lua file.\n")
-        
+        -- safe default:
         needs_cvar_q2a_mvd_autorecord = false
     end
 
@@ -370,4 +398,5 @@ end -- of LogMessage
         
 --[[
 # vim: expandtab tabstop=4 shiftwidth=4 softtabstop=4 autoindent:
+# kate: space-indent on; indent-width 4; mixedindent off;
 --]]
