@@ -185,6 +185,30 @@ function mvd_stop_and_delete()
     
 end
 
+function mvd_script_exec()
+    if exec_script_on_system_after_recording ~= nil then
+        if exec_script_cvars_as_parameters ~= nil then
+            
+            gi.dprintf('mvd.lua mvd_script_exec(): getting cvars for custom script execution.\n')
+            local exec_str = ""
+            for k,v in ipairs(exec_script_cvars_as_parameters) do
+                gi.dprintf('mvd.lua mvd_script_exec(): cvar %s - %s\n', k, v)
+                kstr = gi.cvar(v, "").string
+                kstr = string_strip(kstr)
+                
+                exec_str = exec_str..' "'..kstr..'"'
+            end
+            mvd_os_exec(exec_script_on_system_after_recording..exec_str)
+            
+        else
+            gi.dprintf('mvd.lua mvd_script_exec(): standard script execution.\n')
+            -- using standard execution: <game> and <mvd_file>
+                    mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
+        end
+    end
+    
+end
+
 function mvd_stop()
     if mvd_records == true then
         gi.dprintf('mvd.lua mvd_stop(): stopping MVD recording...\n')
@@ -199,26 +223,7 @@ function mvd_stop()
                 gi.bprintf(PRINT_CHAT, 'MVD: Download the MVD2: %s\n', mvd_file)
             end
             
-            if exec_script_on_system_after_recording ~= nil then
-                if exec_script_cvars_as_parameters ~= nil then
-                    
-                    gi.dprintf('mvd.lua mvd_stop(): getting cvars for custom execution.\n')
-                    local exec_str = ""
-                    for k,v in ipairs(exec_script_cvars_as_parameters) do
-                        gi.dprintf('mvd.lua mvd_stop(): %s - %s\n', k, v)
-                        kstr = gi.cvar(v, "").string
-                        kstr = string_strip(kstr)
-                        
-                        exec_str = exec_str..' "'..kstr..'"'
-                    end
-                    mvd_os_exec(exec_script_on_system_after_recording..exec_str)
-                    
-                else
-                    gi.dprintf('mvd.lua mvd_stop(): standard execution.\n')
-                    -- using standard execution: <game> and <mvd_file>
-                    mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
-                end
-            end
+            mvd_script_exec()
             
         end
         mvd_pathfile = ""
