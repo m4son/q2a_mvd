@@ -42,7 +42,7 @@ plugins = {
     mvd = {
         mvd_webby = 'http://mvd2.quadaver.org',
         exec_script_on_system_after_recording = '/home/gameservers/quake2/plugins/woot.sh',
-        exec_script_cvars_as_parameters = {q2a_mvd_file, game, hostname},
+        exec_script_cvars_as_parameters = {"q2a_mvd_file", "game", "hostname"},
         needs_cvar_q2a_mvd_autorecord = false
     }
 }
@@ -185,28 +185,6 @@ function mvd_stop_and_delete()
     
 end
 
-function mvd_test()
-    mvd_file = "lala.mvd.tgz"
-    gi.cvar_set("q2a_mvd_file", mvd_file)
-    
-    if exec_script_on_system_after_recording ~= nil then
-        if exec_script_cvars_as_parameters ~= nil then
-            gi.dprintf('drin(): %s\n', exec_script_cvars_as_parameters)
-            local exec_str = ""
-            for k in ipairs(exec_script_cvars_as_parameters) do
-                gi.dprintf('lala: %s\n', k)
-                kstr = string_strip(gi.cvar(k, "").string)
-                exec_str = exec_str..' "'..kstr..'"'
-            end
-            mvd_os_exec(exec_script_on_system_after_recording..exec_str)
-            
-        else
-            mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
-        end
-    end
-    
-end
-
 function mvd_stop()
     if mvd_records == true then
         gi.dprintf('mvd.lua mvd_stop(): stopping MVD recording...\n')
@@ -222,7 +200,24 @@ function mvd_stop()
             end
             
             if exec_script_on_system_after_recording ~= nil then
-                mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
+                if exec_script_cvars_as_parameters ~= nil then
+                    
+                    gi.dprintf('mvd.lua mvd_stop(): getting cvars for custom execution.\n')
+                    local exec_str = ""
+                    for k,v in ipairs(exec_script_cvars_as_parameters) do
+                        gi.dprintf('mvd.lua mvd_stop(): %s - %s\n', k, v)
+                        kstr = gi.cvar(v, "").string
+                        kstr = string_strip(kstr)
+                        
+                        exec_str = exec_str..' "'..kstr..'"'
+                    end
+                    mvd_os_exec(exec_script_on_system_after_recording..exec_str)
+                    
+                else
+                    gi.dprintf('mvd.lua mvd_stop(): standard execution.\n')
+                    -- using standard execution: <game> and <mvd_file>
+                    mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
+                end
             end
             
         end
