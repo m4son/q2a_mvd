@@ -194,7 +194,6 @@ function mvd_script_exec()
             for k,v in ipairs(exec_script_cvars_as_parameters) do
                 kstr = gi.cvar(v, "").string
                 gi.dprintf('mvd.lua mvd_script_exec(): cvar %s, %s: %s\n', k, v, kstr)
-                kstr = string_strip(kstr)
                 
                 exec_str = exec_str..' "'..kstr..'"'
             end
