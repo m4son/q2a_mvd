@@ -42,8 +42,8 @@ plugins = {
     mvd = {
         mvd_webby = 'http://mvd2.quadaver.org',
         exec_script_on_system_after_recording = '/home/gameservers/quake2/plugins/woot.sh',
+        exec_script_cvars_as_parameters = {q2a_mvd_file, game, hostname},
         needs_cvar_q2a_mvd_autorecord = false
-        exec_script_cvars_as_parameters = {q2a_mvd_file game hostname}
     }
 }
 ------------------------------
@@ -74,7 +74,9 @@ local teams_ready = {}
 local mvd_records = false
 local started_on_round_state = ""
 local mvd_pathfile = ""
+
 local mvd_file = ""
+gi.cvar_set("q2a_mvd_file", mvd_file)
 
 
 ---- small helper functions follow: ----
@@ -144,12 +146,9 @@ function mvd_start_recording()
     gi.AddCommandString("mvdrecord -z "..filename.."\n")
 
     mvd_file = filename..".mvd2.gz"
-
-    local cvar = gi.cvar("q2a_mvd_file", "")
-    gi.cvar_set(cvar.name, mvd_file)
+    gi.cvar_set("q2a_mvd_file", mvd_file)
 
     mvd_pathfile = game.."/demos/"..mvd_file
-
     mvd_records = true
 
     local hostname = gi.cvar("hostname", "").string
@@ -177,6 +176,8 @@ function mvd_stop_and_delete()
             end
             mvd_pathfile = ""
             mvd_file = ""
+            gi.cvar_set("q2a_mvd_file", mvd_file)
+            
         else
             gi.bprintf(PRINT_CHAT, 'MVD: Be quick to ready up again! MVD2 is still recording!\n')
         end
@@ -184,6 +185,27 @@ function mvd_stop_and_delete()
     
 end
 
+function mvd_test()
+    mvd_file = "lala.mvd.tgz"
+    gi.cvar_set("q2a_mvd_file", mvd_file)
+    
+    if exec_script_on_system_after_recording ~= nil then
+        if exec_script_cvars_as_parameters ~= nil then
+            gi.dprintf('drin(): %s\n', exec_script_cvars_as_parameters)
+            local exec_str = ""
+            for k in ipairs(exec_script_cvars_as_parameters) do
+                gi.dprintf('lala: %s\n', k)
+                kstr = string_strip(gi.cvar(k, "").string)
+                exec_str = exec_str..' "'..kstr..'"'
+            end
+            mvd_os_exec(exec_script_on_system_after_recording..exec_str)
+            
+        else
+            mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
+        end
+    end
+    
+end
 
 function mvd_stop()
     if mvd_records == true then
@@ -200,23 +222,14 @@ function mvd_stop()
             end
             
             if exec_script_on_system_after_recording ~= nil then
-								if exec_script_cvars_as_parameters ~= nil then
-                    
-                    local exec_str = ""
-                    for k in ipairs(exec_script_cvars_as_parameters) do 
-                        kstr = gi.cvar(k, "").string
-                        exec_str = exec_str..' "'..kstr..'"'
-                    end
-                    mvd_os_exec(exec_script_on_system_after_recording..exec_str)
-                    
-                else
-                    mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
-								end
+                mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
             end
             
         end
         mvd_pathfile = ""
         mvd_file = ""
+        gi.cvar_set("q2a_mvd_file", mvd_file)
+        
     end
 end
 
