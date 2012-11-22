@@ -41,13 +41,13 @@ plugins = {
     },
     mvd = {
         mvd_webby = 'http://mvd2.quadaver.org',
-        exec_script_on_system_after_recording = '/home/gameservers/quake2/plugins/woot.sh',
+        exec_script_on_system_after_recording = '/home/gameservers/quake2/plugins/mvd_transfer.sh',
         exec_script_cvars_as_parameters = {"q2a_mvd_file", "game", "hostname"},
         needs_cvar_q2a_mvd_autorecord = false
     }
 }
 ------------------------------
-!! Notice the "," in front of mvd = {
+!! Notice the "," in front of "mvd = {"
 
 --]]
 
@@ -202,7 +202,7 @@ function mvd_script_exec()
         else
             gi.dprintf('mvd.lua mvd_script_exec(): standard script execution.\n')
             -- using standard execution: <game> and <mvd_file>
-            mvd_os_exec(exec_script_on_system_after_recording..' "'..game..'" "'..mvd_file..'"')
+            mvd_os_exec(exec_script_on_system_after_recording..' "'..mvd_file..'" "'..game..'"')
         end
     end
     
@@ -356,7 +356,7 @@ function LogMessage(msg)
     --    return true
     --end
     
-    local match = string.match(msg, "Scores and time was resetted by request of captains")
+    local match = string.match(msg, "Scores and time .+ reset.+by request of captains")
     if match ~= nil then
         -- reset teams ready state
         reset_ready_state()
