@@ -6,7 +6,7 @@ game="$2"
 _file="$game/demos/$mvd"
 
 if [ -f "$_file" ]; then
-	scp "$_file"  your_domain@here.com:/home/user/public_html/q2demos/   &
+	scp -p "$_file"  your_domain@here.com:/home/user/public_html/q2demos/   &
 else
 	echo "$0 Error: '$_file' not found. Not transferring anything. :("
 fi
