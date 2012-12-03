@@ -201,7 +201,7 @@ function mvd_script_exec()
             
         else
             gi.dprintf('mvd.lua mvd_script_exec(): standard script execution.\n')
-            -- using standard execution: <game> and <mvd_file>
+            -- using standard execution: <mvd_file> and  <game>
             mvd_os_exec(exec_script_on_system_after_recording..' "'..mvd_file..'" "'..game..'"')
         end
     end

@@ -1,4 +1,4 @@
-!/usr/bin/env bash
+#!/usr/bin/env bash
 # small transfer script by Shaque 2012-11-22
 mvd="$1"
 game="$2"
