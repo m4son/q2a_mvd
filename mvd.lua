@@ -24,6 +24,7 @@ Function:
 Fully working initial version by Paul Klumpp, 2012-11-12
 Please record your big changes here and increase version number:
 
+1.7: works with latest TNG versions, round_begin 15 
 1.6: ability to give cvars as parameters to the exec_script
 1.5: exchanged all "say" with bprintf or dprintf
 1.4: added round_state check, added whether a cvar "q2a_mvd_autorecord" needs to be set so the recording happens runs (for lrcon usage)
@@ -52,6 +53,7 @@ plugins = {
 --]]
 
 local game = gi.cvar("game", "").string
+local round_begin = gi.cvar("round_begin", "").string
 local sv_mvd_enable = gi.cvar("sv_mvd_enable", "").string
 
 if game ~= "action" or sv_mvd_enable == "0" or sv_mvd_enable == "" or sv_mvd_enable == nil then
@@ -60,7 +62,7 @@ if game ~= "action" or sv_mvd_enable == "0" or sv_mvd_enable == "" or sv_mvd_ena
 end
 -- if we came to here, it's action!
 
-local version = "1.6hau"
+local version = "1.7"
 gi.AddCommandString("sets q2a_mvd "..version.."\n")
 
 local mvd_webby -- configure this one in the config.lua
@@ -320,7 +322,7 @@ function LogMessage(msg)
         return true
     end
     
-    local match = string.match(msg, "The round will begin in 20 seconds!")
+    local match = string.match(msg, "The round will begin in "..round_begin.." seconds!")
     if match ~= nil then
         -- if mvd not recording then start mvd record
         if mvd_records == false then
